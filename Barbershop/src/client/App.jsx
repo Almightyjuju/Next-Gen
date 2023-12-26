@@ -1,21 +1,16 @@
-import React, { useState, useEffect } from "react";
-import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom";
-import Login from "./components/Login";
+import React from "react";
+import "./App.css";
 import Register from "./components/Register";
-import Home from "./components/Home";
-import Navigations from "./components/Navigations";
-import Profile from "./components/Profile";
-import Appointments from "./components/Appointments";
+import Login from "./components/Login";
 
 function App() {
-  const [token, setToken] = useState(null);
-
-  useEffect(() => {
-    const storedToken = localStorage.getItem("userToken");
-    if (storedToken) {
-      setToken(storedToken);
-    }
-  }, []);
+  return (
+    <div className="App">
+      <h1>My App</h1>
+      <Login />
+      <Register />
+    </div>
+  );
 }
 
 export default App;

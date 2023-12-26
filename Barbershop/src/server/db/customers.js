@@ -33,7 +33,7 @@ const getCustomer = async ({ email, password }) => {
   }
   try {
     const customer = await getCustomerByEmail(email);
-    if (!customer) throw new Error("User not found");
+    if (!customer) throw new Error("Customer not found");
     const hashedPassword = customer.password;
     const passwordsMatch = await bcrypt.compare(password, hashedPassword);
     if (!passwordsMatch) throw new Error("Invalid password");
