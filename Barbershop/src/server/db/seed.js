@@ -2,9 +2,10 @@ const db = require("./client");
 const { createCustomer } = require("./customers.js");
 const { createBarber } = require("./barbers.js");
 const { createService } = require("./services.js");
-const { createAvailability } = require("./availability.js");
-
-// ... customers data ...
+const { createAvailability } = require("./availabilities.js");
+const { createAppointment } = require("./appointments.js");
+const { createReview } = require("./reviews.js");
+// 1 ... customers data ...
 const customers = [
   {
     name: "Junior Pizzati",
@@ -12,9 +13,16 @@ const customers = [
     phoneNumber: "504-237-6099",
     password: "Jujuthemenace",
   },
+
+  {
+    name: "Perry Stubs",
+    email: "perrystubs@gmail.com",
+    phoneNumber: "504-292-3303",
+    password: "LeoandCleo",
+  },
 ];
 
-// ... barbers data ...
+// 2 ... barbers data ...
 const barbers = [
   {
     name: "Kevin Vicknair",
@@ -31,7 +39,7 @@ const barbers = [
   },
 ];
 
-// ... services data ...
+// 3 ... services data ...
 const services = [
   {
     name: "Haircut",
@@ -60,9 +68,64 @@ const services = [
   },
 ];
 
-// ... availability ...
+// 4 ... availability data ...
 
-const availability = [];
+const availabilities = [
+  {
+    barberId: 1,
+    date: "2023-12-26",
+    timeSlot: "10:00 AM - 11:00AM",
+  },
+  {
+    barberId: 1,
+    date: "2023-12-26",
+    timeSlot: "10:45 AM - 11:30 AM",
+  },
+  {
+    barberId: 2,
+    date: "2023-12-26",
+    timeSlot: "11:00 AM - 11:45 AM",
+  },
+];
+
+// 5 ... appointments data ...
+
+const appointments = [
+  {
+    customerId: 1,
+    barberId: 1,
+    serviceId: 1,
+    appointmentDate: "2023-12-26",
+    appointmentTime: "6:00 PM",
+    status: "Confirmed",
+  },
+
+  {
+    customerId: 2,
+    barberId: 1,
+    serviceId: 1,
+    appointmentDate: "2023-12-26",
+    appointmentTime: "4:15 PM",
+    status: "Pending",
+  },
+];
+
+// ... reviews ...
+
+const reviews = [
+  {
+    customerId: 1,
+    barberId: 1,
+    rating: 5,
+    comment: "Excellent service, highly recommended!",
+  },
+  {
+    customerId: 2,
+    barberId: 1,
+    rating: 5,
+    comment: "Good haircut, very happy with the outcome. Friendly barber.",
+  },
+];
 
 // ... drop tables ...
 const dropTables = async () => {
@@ -70,7 +133,7 @@ const dropTables = async () => {
     await db.query(`
     DROP TABLE IF EXISTS reviews;
     DROP TABLE IF EXISTS appointments;
-    DROP TABLE IF EXISTS availability;
+    DROP TABLE IF EXISTS availabilities;
     DROP TABLE IF EXISTS services;
     DROP TABLE IF EXISTS barbers;
     DROP TABLE IF EXISTS customers;
@@ -105,15 +168,14 @@ const createTables = async () => {
       id SERIAL PRIMARY KEY, 
       name VARCHAR(255) NOT NULL, 
       duration VARCHAR(255), 
-      price DECIMAL(10,2) NOT NULL 
+      price DECIMAL(10,2) NOT NULL
     )`);
 
-    await db.query(`CREATE TABLE IF NOT EXISTS availability(
+    await db.query(`CREATE TABLE IF NOT EXISTS availabilities(
       id SERIAL PRIMARY KEY, 
       barberId INT,
       date DATE NOT NULL, 
-      startTime TIME NOT NULL,
-      endTime TIME NOT NULL,
+      timeSlot VARCHAR(255) NOT NULL,
       FOREIGN KEY (barberId) REFERENCES barbers(id)
     )`);
 
@@ -124,6 +186,7 @@ const createTables = async () => {
         serviceId INT, 
         appointmentDate DATE NOT NULL, 
         appointmentTime TIME NOT NULL, 
+        status VARCHAR(255),
         FOREIGN KEY (customerId) REFERENCES customers(id), 
         FOREIGN KEY (barberId) REFERENCES barbers(id), 
         FOREIGN KEY (serviceId) REFERENCES services(id)
@@ -185,26 +248,57 @@ const insertServices = async () => {
         duration: service.duration,
       });
     }
-    console.log("Service seed data inserted successfully.");
+    console.log("Service's seed data inserted successfully.");
   } catch (error) {
     console.error("Error inserting service seed data", error);
   }
 };
 
-// const insertAppointments = async () => {
-//   try {
-//     for (const appointment of appointments) {
-//       await createAppoinment({
-//         date: appointment.date,
-//         time: appointment.time,
-//         status: appointment.status || "booked",
-//       });
-//     }
-//     console.log("Appointments inserted successfuly");
-//   } catch (error) {
-//     console.error("Error inserting appointments:", error);
-//   }
-// };
+const insertAvailabilities = async () => {
+  try {
+    for (const availability of availabilities) {
+      await createAvailability({
+        barberId: availability.barberId,
+        date: availability.date,
+        timeSlot: availability.timeSlot,
+      });
+    }
+  } catch {}
+};
+
+const insertAppointments = async () => {
+  try {
+    for (const appointment of appointments) {
+      await createAppointment({
+        customerId: appointment.customerId,
+        barberId: appointment.barberId,
+        serviceId: appointment.serviceId,
+        appointmentDate: appointment.appointmentDate,
+        appointmentTime: appointment.appointmentTime,
+        status: appointment.status,
+      });
+    }
+    console.log("Appointment's seed inserted successfully");
+  } catch (error) {
+    console.error("Error inserting appointments:", error);
+  }
+};
+
+const insertReviews = async () => {
+  try {
+    for (const review of reviews) {
+      await createReview({
+        customerId: review.customerId,
+        barberId: review.barberId,
+        rating: review.rating,
+        comment: review.comment,
+      });
+    }
+    console.log("Review's seed inserted successfully");
+  } catch (error) {
+    console.error("Error inserting reviews:", error);
+  }
+};
 
 const seedDatabase = async () => {
   try {
@@ -214,7 +308,9 @@ const seedDatabase = async () => {
     await insertCustomers();
     await insertBarbers();
     await insertServices();
-    // await insertAppointments();
+    await insertAvailabilities();
+    await insertAppointments();
+    await insertReviews();
     console.log("Seed data inserted succesfully");
   } catch (err) {
     throw err;
