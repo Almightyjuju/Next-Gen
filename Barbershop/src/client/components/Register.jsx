@@ -4,6 +4,7 @@ const Register = () => {
   const [firstName, setFirstName] = useState("");
   const [lastName, setLasttName] = useState("");
   const [email, setEmail] = useState("");
+  const [phoneNumber, setphoneNumber] = useState("");
   const [password, setPassword] = useState("");
   const [message, setMessage] = useState("");
 
@@ -17,6 +18,10 @@ const Register = () => {
 
   const handleEmailChange = (e) => {
     setEmail(e.target.value);
+  };
+
+  const handlePhoneNumberChange = (e) => {
+    setphoneNumber(e.target.value);
   };
 
   const handlePasswordChange = (e) => {
@@ -36,6 +41,7 @@ const Register = () => {
             firstName,
             lastName,
             email,
+            phoneNumber,
             password,
           }),
         }
@@ -48,6 +54,7 @@ const Register = () => {
       setFirstName("");
       setLasttName("");
       setEmail("");
+      setphoneNumber("");
       setPassword("");
     } catch (err) {
       console.error(`${err.name}: ${err.message}`);
@@ -90,6 +97,16 @@ const Register = () => {
             id="email"
             value={email}
             onChange={handleEmailChange}
+            required
+          />
+        </div>
+        <div>
+          <label htmlFor="phone">Phone Number:</label>
+          <input
+            type="tel"
+            id="phone"
+            value={phoneNumber}
+            onChange={handlePhoneNumberChange}
             required
           />
         </div>

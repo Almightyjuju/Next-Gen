@@ -27,6 +27,7 @@ const barbers = [
   {
     name: "Kevin Vicknair",
     email: "Kjvicknair@yahoo.com",
+    image: "",
     shopNumber: "+1(504)493-5992",
     password: "Athena418",
   },
@@ -34,6 +35,7 @@ const barbers = [
   {
     name: "Leo Martinez",
     email: "Martinez.leo51@yahoo.com",
+    image: "",
     shopNumber: "+1(504)493-5992",
     password: "MartinezLeo",
   },
@@ -159,7 +161,8 @@ const createTables = async () => {
     await db.query(`CREATE TABLE IF NOT EXISTS barbers(
         id SERIAL PRIMARY KEY, 
         name VARCHAR(255) DEFAULT 'name', 
-        email VARCHAR(255) UNIQUE NOT NULL, 
+        email VARCHAR(255) UNIQUE NOT NULL,
+        image TEXT, 
         shopNumber VARCHAR(55) NOT NULL, 
         password VARCHAR(255) NOT NULL
       )`);
@@ -229,6 +232,7 @@ const insertBarbers = async () => {
       await createBarber({
         name: barber.name,
         email: barber.email,
+        image: barber.image,
         shopNumber: barber.shopNumber,
         password: barber.password,
       });

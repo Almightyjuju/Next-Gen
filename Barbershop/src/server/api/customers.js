@@ -54,6 +54,7 @@ customersRouter.post("/register", async (req, res, next) => {
     const customer = await createCustomer({
       name,
       email,
+      phoneNumber,
       password,
     });
     const token = jwt.sign(

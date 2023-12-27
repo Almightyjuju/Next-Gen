@@ -5,6 +5,7 @@ const SALT_COUNT = 10;
 const createBarber = async ({
   name = "first last",
   email,
+  image,
   shopNumber,
   password,
 }) => {
@@ -13,8 +14,8 @@ const createBarber = async ({
     const {
       rows: [barber],
     } = await db.query(
-      `INSERT INTO barbers(name, email, shopNumber, password) VALUES ($1, $2, $3, $4) ON CONFLICT (email) DO NOTHING RETURNING *`,
-      [name, email, shopNumber, hashedPassword]
+      `INSERT INTO barbers(name, email, image, shopNumber, password) VALUES ($1, $2, $3, $4, $5) ON CONFLICT (email) DO NOTHING RETURNING *`,
+      [name, email, image, shopNumber, hashedPassword]
     );
     return barber;
   } catch (err) {

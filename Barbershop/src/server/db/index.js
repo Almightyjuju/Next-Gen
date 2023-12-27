@@ -1,3 +1,1 @@
-module.exports = {
-  ...require("./customers"),
-};
+module.exports = { ...require("./customers"), ...require("./barbers") };
