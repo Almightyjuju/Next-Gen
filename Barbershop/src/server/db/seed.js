@@ -220,7 +220,7 @@ const insertCustomers = async () => {
         password: customer.password,
       });
     }
-    console.log("Customer's seed data inserted successfully.");
+    console.log("Customer seed data inserted successfully.");
   } catch (error) {
     console.error("Error inserting customer's seed data:", error);
   }
@@ -237,7 +237,7 @@ const insertBarbers = async () => {
         password: barber.password,
       });
     }
-    console.log("Barber's seed data inserted successfully.");
+    console.log("Barber seed data inserted successfully.");
   } catch (error) {
     console.error("Error inserting barber's seed data", error);
   }
@@ -252,7 +252,7 @@ const insertServices = async () => {
         duration: service.duration,
       });
     }
-    console.log("Service's seed data inserted successfully.");
+    console.log("Service seed data inserted successfully.");
   } catch (error) {
     console.error("Error inserting service seed data", error);
   }
@@ -267,7 +267,10 @@ const insertAvailabilities = async () => {
         timeSlot: availability.timeSlot,
       });
     }
-  } catch {}
+    console.log("Availability seed data inserted successfully.");
+  } catch (error) {
+    console.error("Error inserting availability seed data:", error);
+  }
 };
 
 const insertAppointments = async () => {
@@ -282,7 +285,7 @@ const insertAppointments = async () => {
         status: appointment.status,
       });
     }
-    console.log("Appointment's seed inserted successfully");
+    console.log("Appointment seed inserted successfully");
   } catch (error) {
     console.error("Error inserting appointments:", error);
   }
@@ -298,7 +301,7 @@ const insertReviews = async () => {
         comment: review.comment,
       });
     }
-    console.log("Review's seed inserted successfully");
+    console.log("Review seed inserted successfully");
   } catch (error) {
     console.error("Error inserting reviews:", error);
   }

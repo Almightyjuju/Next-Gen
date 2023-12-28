@@ -47,10 +47,32 @@ const getAppointmentbyId = async (id) => {
   }
 };
 
+const getCustomerAppointments = async (customerId) => {
+  const query = `SELECT * FROM appointments WHERE customerId = $1;`;
+  const values = [customerId];
+  try {
+    const result = await db.query(query, values);
+    return result.rows;
+  } catch (error) {
+    throw new Error(`Error getting customer's appointments: ${error}`);
+  }
+};
+
+const getBarberAppointments = async (barberId) => {
+  const query = `SELECT * FROM appointments WHERE barberId = $1;`;
+  const values = [barberId];
+  try {
+    const result = await db.query(query, values);
+    return result.rows;
+  } catch (error) {
+    throw new Error(`Error getting barber's appointments: ${error}`);
+  }
+};
+
 const updateAppointment = async (id, appointment) => {
   const {
     customerId,
-    babrerId,
+    barberId,
     serviceId,
     appointmentDate,
     appointmentTime,
@@ -59,7 +81,7 @@ const updateAppointment = async (id, appointment) => {
   const query = `UPDATE appointments SET customerId = $1, barberId = $2, serviceId = $3, appointmentDate = $4, appointmentTime = $5, status = $6  WHERE id = $7 RETURNING *;`;
   const values = [
     customerId,
-    babrerId,
+    barberId,
     serviceId,
     appointmentDate,
     appointmentTime,
@@ -89,6 +111,8 @@ module.exports = {
   createAppointment,
   getAppointments,
   getAppointmentbyId,
+  getCustomerAppointments,
+  getBarberAppointments,
   updateAppointment,
   deleteAppointment,
 };

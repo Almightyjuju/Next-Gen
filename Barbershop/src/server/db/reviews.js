@@ -35,7 +35,7 @@ const getReviewById = async (id) => {
   }
 };
 
-const UpdateReview = async (id, { customerId, barberId, rating, comment }) => {
+const updateReview = async (id, { customerId, barberId, rating, comment }) => {
   try {
     const query = `UPDATE reviews SET customerId = $1, barberId = $2, rating = $3, comment =$4 WHERE id = $5`;
     const values = [customerId, barberId, rating, comment, id];
@@ -47,7 +47,31 @@ const UpdateReview = async (id, { customerId, barberId, rating, comment }) => {
   }
 };
 
-const DeleteReview = async (id) => {
+const getReviewsByCustomerId = async (customerId) => {
+  try {
+    const query = `SELECT * FROM reviews WHERE customerId = $1`;
+    const values = [customerId];
+    const result = await db.query(query, values);
+    return result.rows;
+  } catch (error) {
+    console.error("Error getting reviews by customer ID:", error);
+    throw error;
+  }
+};
+
+const getReviewByBarberId = async (barberId) => {
+  try {
+    const query = `SELECT * FROM reviews WHERE barberId = $1`;
+    const values = [barberId];
+    const result = await db.query(query, values);
+    return result.rows;
+  } catch (error) {
+    console.error("Error getting reviews by barber ID:", error);
+    throw error;
+  }
+};
+
+const deleteReview = async (id) => {
   try {
     const query = `DELETE FROM reviews WHERE id = $1`;
     const values = [id];
@@ -63,6 +87,8 @@ module.exports = {
   createReview,
   getAllReviews,
   getReviewById,
-  UpdateReview,
-  DeleteReview,
+  updateReview,
+  getReviewsByCustomerId,
+  getReviewByBarberId,
+  deleteReview,
 };

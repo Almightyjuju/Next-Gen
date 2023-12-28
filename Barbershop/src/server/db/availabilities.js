@@ -16,7 +16,7 @@ const getAvailabilities = async () => {
 
 const updateAvailability = async (availability) => {
   const { id, barberId, date, timeSlot } = availability;
-  const query = `UPDATE SERVICE SET barberId = $1, date = $2, timeSlot = $3 WHERE id = $4`;
+  const query = `UPDATE availabilities SET barberId = $1, date = $2, timeSlot = $3 WHERE id = $4`;
   const values = [barberId, date, timeSlot, id];
   await db.query(query, values);
 };

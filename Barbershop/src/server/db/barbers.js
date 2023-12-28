@@ -53,11 +53,21 @@ const getBarberbyId = async (barberId) => {
     throw err;
   }
 };
+
+const getAllBarbers = async () => {
+  try {
+    const { rows: barbers } = await db.query(`SELECT * FROM barbers`);
+    return barbers;
+  } catch (err) {
+    throw err;
+  }
+};
+
 const getBarberbyEmail = async () => {
   try {
     const {
       rows: [barber],
-    } = await db.query(`SELECT FROM barbers where email = $1;`[email]);
+    } = await db.query(`SELECT * FROM barbers where email = $1;`[email]);
     if (!barber) {
       return;
     }
@@ -67,9 +77,51 @@ const getBarberbyEmail = async () => {
   }
 };
 
+const updateBarber = async (
+  barberId,
+  { name, email, image, shopNumber, password }
+) => {
+  try {
+    const hashedPassword = await bcrypt.hash(password, SALT_COUNT);
+    const {
+      rows: [updatedBarber],
+    } = await db.query(
+      `UPDATE barbers SET name = $1, email $2, image = $3, shopNumber = $4, password = $5 WHERE id = $6. RETURNING *`,
+      [name, email, image, shopNumber, hashedPassword, barberId]
+    );
+    if (!updatedBarber) {
+      throw new Error("Barber not found or update failed");
+    }
+    delete updatedBarber.password;
+    return updatedBarber;
+  } catch (err) {
+    throw err;
+  }
+};
+
+const deleteBarber = async (barberId) => {
+  try {
+    const {
+      rows: [deletedBarber],
+    } = await db.query(`DELETE FROM barbers where id = $1 RETURNING *`, [
+      barberId,
+    ]);
+    if (!deletedBarber) {
+      throw new Error("Barber not found");
+    }
+    delete deletedBarber.password;
+    return deletedBarber;
+  } catch (err) {
+    throw err;
+  }
+};
+
 module.exports = {
   createBarber,
   getBarber,
+  getAllBarbers,
   getBarberbyId,
   getBarberbyEmail,
+  updateBarber,
+  deleteBarber,
 };

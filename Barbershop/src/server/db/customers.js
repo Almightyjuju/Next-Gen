@@ -20,6 +20,9 @@ const createCustomer = async ({
       RETURNING *`,
       [name, email, phoneNumber, hashedPassword]
     );
+    if (!customer) {
+      throw new Error("Customer already exists with that email");
+    }
 
     return customer;
   } catch (err) {
@@ -50,9 +53,18 @@ const getCustomerbyId = async (customerId) => {
       rows: [customer],
     } = await db.query("SELECT * FROM customers where id = $1", [customerId]);
     if (!customer) {
-      throw new Error("User not found");
+      throw new Error("Customer not found");
     }
     return customer;
+  } catch (err) {
+    throw err;
+  }
+};
+
+const getAllCustomers = async () => {
+  try {
+    const { rows: customers } = await db.query(`SELECT * FROM customers`);
+    return customers;
   } catch (err) {
     throw err;
   }
@@ -79,9 +91,49 @@ const getCustomerByEmail = async (email) => {
   }
 };
 
+const updateCustomer = async (
+  customerId,
+  { name, email, phoneNumber, password }
+) => {
+  try {
+    const hashedPassword = await bcrypt.hash(password, SALT_COUNT);
+    const {
+      rows: [updatedCustomer],
+    } = await db.query(
+      `UPDATE customers SET name = $1, email = $2, phoneNumber = $3, password = $4, WHERE id = $5 RETURNING *`,
+      [name, email, phoneNumber, hashedPassword, customerId]
+    );
+    if (!updatedCustomer) {
+      throw new Error("Customer not found or update failed");
+    }
+    return updatedCustomer;
+  } catch (err) {
+    throw err;
+  }
+};
+
+const deleteCustomer = async (customerId) => {
+  try {
+    const {
+      rows: [customer],
+    } = await db.query("DELETE from customers WHERE id = $1 RETURNING *", [
+      customerId,
+    ]);
+    if (!customer) {
+      throw new Error("Customer not found");
+    }
+    return customer;
+  } catch (err) {
+    throw err;
+  }
+};
+
 module.exports = {
   createCustomer,
   getCustomer,
   getCustomerbyId,
+  getAllCustomers,
   getCustomerByEmail,
+  updateCustomer,
+  deleteCustomer,
 };
