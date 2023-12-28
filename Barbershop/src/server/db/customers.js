@@ -47,7 +47,7 @@ const getCustomer = async ({ email, password }) => {
   }
 };
 
-const getCustomerbyId = async (customerId) => {
+const getCustomerById = async (customerId) => {
   try {
     const {
       rows: [customer],
@@ -131,7 +131,7 @@ const deleteCustomer = async (customerId) => {
 module.exports = {
   createCustomer,
   getCustomer,
-  getCustomerbyId,
+  getCustomerById,
   getAllCustomers,
   getCustomerByEmail,
   updateCustomer,

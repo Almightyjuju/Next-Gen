@@ -1,7 +1,15 @@
 const express = require("express");
 const customersRouter = express.Router();
 
-const { createCustomer, getCustomer, getCustomerByEmail } = require("../db/");
+const {
+  createCustomer,
+  getCustomer,
+  getCustomerByEmail,
+  getAllCustomers,
+  getCustomerById,
+  updateCustomer,
+  deleteCustomer,
+} = require("../db/");
 
 const jwt = require("jsonwebtoken");
 
@@ -73,6 +81,50 @@ customersRouter.post("/login", async (req, res, next) => {
     }
   } catch (err) {
     next(err);
+  }
+});
+
+customersRouter.get("/", async (req, res, next) => {
+  try {
+    const customers = await getAllCustomers();
+    res.send({ customers });
+  } catch (error) {
+    next(error);
+  }
+});
+
+customersRouter.get("/:id", async (req, res, next) => {
+  const customerId = req.params.id;
+
+  try {
+    const customer = await getCustomerById(customerId);
+
+    if (!customer) {
+      return res.status(404).json({ message: "Customer not found" });
+    }
+    delete customer.password;
+
+    res.json(customer);
+  } catch (error) {
+    next(error);
+  }
+});
+
+customersRouter.delete("/:id", async (req, res, next) => {
+  const customerId = req.params.customerId;
+
+  try {
+    const deletedCustomer = await deleteCustomer(customerId);
+
+    if (!deletedCustomer) {
+      return res.status(404).json({
+        error: "Customer not found or already deleted",
+      });
+    }
+
+    res.status(204).end();
+  } catch (error) {
+    next(error);
   }
 });
 

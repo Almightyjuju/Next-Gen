@@ -34,10 +34,10 @@ apiRouter.use(async (req, res, next) => {
 });
 
 const customersRouter = require("./customers");
-// const barbersRouter = require("./barbers");
+const barbersRouter = require("./barbers");
 
 apiRouter.use("/customers", customersRouter);
-// apiRouter.use("/barbers", barbersRouter);
+apiRouter.use("/barbers", barbersRouter);
 
 apiRouter.use((err, req, res, next) => {
   res.status(res.statusCode ? res.statusCode : 500).send(err);

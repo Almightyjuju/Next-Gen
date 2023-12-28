@@ -40,7 +40,7 @@ const getBarber = async ({ email, password }) => {
   }
 };
 
-const getBarberbyId = async (barberId) => {
+const getBarberById = async (barberId) => {
   try {
     const {
       rows: [barber],
@@ -63,11 +63,11 @@ const getAllBarbers = async () => {
   }
 };
 
-const getBarberbyEmail = async () => {
+const getBarberByEmail = async (email) => {
   try {
     const {
       rows: [barber],
-    } = await db.query(`SELECT * FROM barbers where email = $1;`[email]);
+    } = await db.query(`SELECT * FROM barbers WHERE email = $1;`, [email]);
     if (!barber) {
       return;
     }
@@ -86,7 +86,7 @@ const updateBarber = async (
     const {
       rows: [updatedBarber],
     } = await db.query(
-      `UPDATE barbers SET name = $1, email $2, image = $3, shopNumber = $4, password = $5 WHERE id = $6. RETURNING *`,
+      `UPDATE barbers SET name = $1, email = $2, image = $3, shopNumber = $4, password = $5 WHERE id = $6. RETURNING *`,
       [name, email, image, shopNumber, hashedPassword, barberId]
     );
     if (!updatedBarber) {
@@ -120,8 +120,8 @@ module.exports = {
   createBarber,
   getBarber,
   getAllBarbers,
-  getBarberbyId,
-  getBarberbyEmail,
+  getBarberById,
+  getBarberByEmail,
   updateBarber,
   deleteBarber,
 };

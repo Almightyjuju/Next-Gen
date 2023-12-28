@@ -1,99 +1,131 @@
-// const express = require("express");
-// const barbersRouter = express.Router();
+const express = require("express");
+const barbersRouter = express.Router();
 
-// const { createBarber, getBarber, getBarberByEmail } = require("../db");
+const {
+  createBarber,
+  getBarber,
+  getBarberByEmail,
+  getAllBarbers,
+  getBarberById,
+  deleteBarber,
+} = require("../db/");
 
-// const jwt = require("jsonwebtoken");
+const jwt = require("jsonwebtoken");
 
-// barbersRouter.post("/", async (req, res, next) => {
-//   const { name, email, password } = req.body;
-//   try {
-//     const barber = await createBarber({ name, email, password });
-//     const token = jwt.sign(
-//       {
-//         id: barber.id,
-//         email,
-//       },
-//       process.env.JWT_SECRET,
-//       {
-//         expiresIn: "1w",
-//       }
-//     );
-//     res.status(201).json({
-//       message: "Barber created successfully",
-//       token,
-//     });
-//   } catch (err) {
-//     next(err);
-//   }
-// });
+barbersRouter.post("/register", async (req, res, next) => {
+  const { name, email, password, image, shopNumber } = req.body;
+  try {
+    const _barber = await getBarberByEmail(email);
+    if (_barber) {
+      next({
+        name: "BarberExistsError",
+        message: "A barber with that email already exists",
+      });
+    }
+    const barber = await createBarber({
+      name,
+      email,
+      image,
+      shopNumber,
+      password,
+    });
+    const token = jwt.sign(
+      {
+        id: barber.id,
+        email,
+      },
+      process.env.JWT_SECRET,
+      {
+        expiresIn: "1w",
+      }
+    );
+    res.send({
+      message: "Sign up successful!",
+      token,
+    });
+  } catch ({ name, message }) {
+    next({ name, message });
+  }
+});
 
-// barbersRouter.get("/:id", async (req, res, next) => {
-//   const { id } = req.params;
-//   try {
-//     const barber = await getBarber(id);
-//     if (barber) {
-//       res.json(barber);
-//     } else {
-//       res.status(404).json({ message: "Barber not found" });
-//     }
-//   } catch (err) {
-//     next(err);
-//   }
-// });
+barbersRouter.post("/login", async (req, res, next) => {
+  const { email, password } = req.body;
+  if (!email || !password) {
+    next({
+      name: "MissingCredentialsError",
+      message: "Please supply both an email and password",
+    });
+  }
+  try {
+    const barber = await getBarber({ email, password });
+    if (barber) {
+      const token = jwt.sign(
+        {
+          barberId: barber.id,
+          email,
+        },
+        process.env.JWT_SECRET,
+        {
+          expiresIn: "1w",
+        }
+      );
+      res.send({
+        message: "Login successful",
+        token,
+      });
+    } else {
+      next({
+        name: "IncorrectCredentialsError",
+        message: "Username or password is incorrect",
+      });
+    }
+  } catch (err) {
+    next(err);
+  }
+});
 
-// barbersRouter.put("/:id", async (req, res, next) => {
-//   const { id } = req.params;
-//   const { name, email, password } = req.body;
-//   try {
-//     const barber = await updateBarber(id, { name, email, password });
-//     if (barber) {
-//       res.json({
-//         message: "Barber updated succesfully",
-//       });
-//     } else {
-//       res.status(404).json({
-//         message: "Barber not found",
-//       });
-//     }
-//   } catch (err) {
-//     next(err);
-//   }
-// });
+barbersRouter.get("/", async (req, res, next) => {
+  try {
+    const barbers = await getAllBarbers();
+    res.send({ barbers });
+  } catch (error) {
+    next(error);
+  }
+});
 
-// barbersRouter.patch("/:id", async (req, res, next) => {
-//   const { id } = req.params;
-//   const { name, email, password } = req.body;
-//   try {
-//     const barber = await partiallyUpdatedBarber(id, { name, email, password });
-//     if (barber) {
-//       res.json({
-//         message: "Barber updated succesfully",
-//       });
-//     } else {
-//       res.status(404).json({ message: "Barber not found" });
-//     }
-//   } catch (err) {
-//     next(err);
-//   }
-// });
+barbersRouter.get("/:id", async (req, res, next) => {
+  const barberId = req.params.id;
 
-// barbersRouter.delete("/:id", async (req, res, next) => {
-//   const { id } = req.params;
-//   try {
-//     const barber = await deleteBarber(id);
-//     if (barber) {
-//       res.json({
-//         message: "Barber deleted successfully",
-//       });
-//     } else {
-//       res.status(404).json({
-//         message: "Barber not found",
-//       });
-//     }
-//   } catch (err) {
-//     next(err);
-//   }
-// });
+  try {
+    const barber = await getBarberById(barberId);
 
-// module.exports = barbersRouter;
+    if (!barber) {
+      return res.status(404).json({ message: "Barber not found" });
+    }
+    delete barber.password;
+
+    res.json(barber);
+  } catch (error) {
+    next(error);
+  }
+});
+
+barbersRouter.delete("/:id", async (req, res, next) => {
+  const barberId = req.params.id;
+
+  try {
+    const deletedBarber = await deleteBarber(barberId);
+
+    if (!deletedBarber) {
+      return res.status(404).json({
+        error: "Barber not found or already deleted",
+      });
+    }
+
+    res.status(204).end();
+  } catch (error) {
+    next(error);
+  }
+});
+
+module.exports = barbersRouter;
