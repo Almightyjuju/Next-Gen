@@ -35,9 +35,13 @@ apiRouter.use(async (req, res, next) => {
 
 const customersRouter = require("./customers");
 const barbersRouter = require("./barbers");
+const servicesRouter = require("./services");
+const reviewsRouter = require("./reviews");
 
 apiRouter.use("/customers", customersRouter);
 apiRouter.use("/barbers", barbersRouter);
+apiRouter.use("/services", servicesRouter);
+apiRouter.use("/reviews", reviewsRouter);
 
 apiRouter.use((err, req, res, next) => {
   res.status(res.statusCode ? res.statusCode : 500).send(err);
