@@ -1,6 +1,7 @@
 const express = require("express");
 const reviewsRouter = express.Router();
 const { authenticateToken } = require("./authenticateToken");
+const { authenticateBarber } = require("./authenticateBarber");
 const {
   createReview,
   getAllReviews,
@@ -30,10 +31,20 @@ reviewsRouter.get("/:id", async (req, res, next) => {
   }
 });
 
-reviewsRouter.get("/:customer", authenticateToken, async (req, res, next) => {
+reviewsRouter.get("/customer", authenticateToken, async (req, res, next) => {
   try {
     const { customerId } = req.user;
     const reviews = await getReviewbyCustomerId(customerId);
+    res.status(200).json(reviews);
+  } catch (error) {
+    next(error);
+  }
+});
+
+reviewsRouter.get("/barber", authenticateBarber, async (req, res, next) => {
+  try {
+    const { barberId } = req.barber;
+    const reviews = await getReviewByBarberId(barberId);
     res.status(200).json(reviews);
   } catch (error) {
     next(error);
@@ -61,6 +72,16 @@ reviewsRouter.put("/:id", authenticateToken, async (req, res, next) => {
     const { customerId, barberId, rating, comment } = req.body;
     await updateReview(id, { customerId, barberId, rating, comment });
     res.status(200).json({ message: "Review updated successfully" });
+  } catch (error) {
+    next(error);
+  }
+});
+
+reviewsRouter.delete("/:id", authenticateBarber, async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    await deleteReview(id);
+    res.status(204).end();
   } catch (error) {
     next(error);
   }
