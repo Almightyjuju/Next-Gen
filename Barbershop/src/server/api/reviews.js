@@ -33,7 +33,7 @@ reviewsRouter.get("/:id", async (req, res, next) => {
 
 reviewsRouter.get("/customer", authenticateToken, async (req, res, next) => {
   try {
-    const { customerId } = req.user;
+    const { customerId } = req.customer;
     const reviews = await getReviewbyCustomerId(customerId);
     res.status(200).json(reviews);
   } catch (error) {

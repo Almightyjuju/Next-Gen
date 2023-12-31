@@ -36,7 +36,7 @@ const getAppointments = async () => {
   }
 };
 
-const getAppointmentbyId = async (id) => {
+const getAppointmentById = async (id) => {
   const query = `SELECT * FROM appointments WHERE id = $1;`;
   const values = [id];
   try {
@@ -110,7 +110,7 @@ const deleteAppointment = async (id) => {
 module.exports = {
   createAppointment,
   getAppointments,
-  getAppointmentbyId,
+  getAppointmentById,
   getCustomerAppointments,
   getBarberAppointments,
   updateAppointment,
