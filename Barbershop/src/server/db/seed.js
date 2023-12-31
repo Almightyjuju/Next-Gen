@@ -127,6 +127,14 @@ const reviews = [
     rating: 5,
     comment: "Good haircut, very happy with the outcome. Friendly barber.",
   },
+
+  {
+    customerId: 1,
+    barberId: 2,
+    rating: 5,
+    comment:
+      "Leo is an amazing barber, he took his time with my haircut and I am very happy with the outcome.",
+  },
 ];
 
 // ... drop tables ...

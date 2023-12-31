@@ -30,7 +30,7 @@ reviewsRouter.get("/:id", async (req, res, next) => {
   }
 });
 
-reviewsRouter.get("/customer", authenticateToken, async (req, res, next) => {
+reviewsRouter.get("/:customer", authenticateToken, async (req, res, next) => {
   try {
     const { customerId } = req.user;
     const reviews = await getReviewbyCustomerId(customerId);
