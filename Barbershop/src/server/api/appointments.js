@@ -59,3 +59,79 @@ appointmentsRouter.get(
     }
   }
 );
+
+appointmentsRouter.post(
+  "/",
+  authenticateToken,
+  authenticateBarber,
+  async (req, res, next) => {
+    try {
+      const {
+        customerId,
+        barberId,
+        serviceId,
+        appointmentDate,
+        appointmentTime,
+        status,
+      } = req.body;
+      const appointment = await createAppointment({
+        customerId,
+        barberId,
+        serviceId,
+        appointmentDate,
+        appointmentTime,
+        status,
+      });
+      res.status(201).json(appointment);
+    } catch (error) {
+      next(error);
+    }
+  }
+);
+
+appointmentsRouter.put(
+  "/:id",
+  authenticateToken,
+  authenticateBarber,
+  async (req, res, next) => {
+    try {
+      const { id } = req.params;
+      const {
+        customerId,
+        barberId,
+        serviceId,
+        appointmentDate,
+        appointmentTime,
+        status,
+      } = req.body;
+      await updateAppointment(id, {
+        customerId,
+        barberId,
+        serviceId,
+        appointmentDate,
+        appointmentTime,
+        status,
+      });
+      res.status(200).json({ messgae: "Appointment updated successfully" });
+    } catch (error) {
+      next(error);
+    }
+  }
+);
+
+appointmentsRouter.delete(
+  "/:id",
+  authenticateToken,
+  authenticateBarber,
+  async (req, res, next) => {
+    try {
+      const { id } = req.params;
+      await deleteAppointment(id);
+      res.status(204).end();
+    } catch (error) {
+      next(error);
+    }
+  }
+);
+
+module.exports = appointmentsRouter;

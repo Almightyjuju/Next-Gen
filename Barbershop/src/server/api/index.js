@@ -37,11 +37,15 @@ const customersRouter = require("./customers");
 const barbersRouter = require("./barbers");
 const servicesRouter = require("./services");
 const reviewsRouter = require("./reviews");
+const appointmentsRouter = require("./appointments");
+const availabilitiesRouter = require("./availabilities");
 
 apiRouter.use("/customers", customersRouter);
 apiRouter.use("/barbers", barbersRouter);
 apiRouter.use("/services", servicesRouter);
 apiRouter.use("/reviews", reviewsRouter);
+apiRouter.use("/appointments", appointmentsRouter);
+apiRouter.use("/availabilities", availabilitiesRouter);
 
 apiRouter.use((err, req, res, next) => {
   res.status(res.statusCode ? res.statusCode : 500).send(err);
