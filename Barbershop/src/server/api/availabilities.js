@@ -5,15 +5,26 @@ const { authenticateBarber } = require("./authenticateBarber");
 
 const {
   createAvailability,
-  getAvailabilities,
+  getAllAvailabilities,
+  getAvailabilityById,
   updateAvailability,
   deleteAvailability,
 } = require("../db/availabilities");
 
 availabilitiesRouter.get("/", async (req, res, next) => {
   try {
-    const availabilities = await getAvailabilities();
+    const availabilities = await getAllAvailabilities();
     res.json({ availabilities });
+  } catch (error) {
+    next(error);
+  }
+});
+
+availabilitiesRouter.get("/:id", async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    const availability = await getAvailabilityById(id);
+    res.status(200).json(availability);
   } catch (error) {
     next(error);
   }

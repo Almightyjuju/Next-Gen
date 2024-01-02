@@ -8,10 +8,21 @@ const createAvailability = async (availability) => {
   await db.query(query, values);
 };
 
-const getAvailabilities = async () => {
+const getAllAvailabilities = async () => {
   const query = `SELECT * FROM availabilities`;
   const result = await db.query(query);
   return result.rows;
+};
+
+const getAvailabilityById = async (id) => {
+  try {
+    const query = `SELECT * FROM availabilities WHERE id = $1`;
+    const values = [id];
+    const result = await db.query(query, values);
+    return result.rows[0];
+  } catch (error) {
+    throw error;
+  }
 };
 
 const updateAvailability = async (availability) => {
@@ -29,7 +40,8 @@ const deleteAvailability = async (id) => {
 
 module.exports = {
   createAvailability,
-  getAvailabilities,
+  getAllAvailabilities,
+  getAvailabilityById,
   updateAvailability,
   deleteAvailability,
 };
