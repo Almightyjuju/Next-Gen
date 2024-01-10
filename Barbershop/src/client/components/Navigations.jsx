@@ -1,6 +1,14 @@
-import React from "React";
-import { Link } from "react-router";
+import React from "react";
+import { Link } from "react-router-dom";
 
-const Navigations = () => {};
-
-export default Navigations;
+export default function Navigations() {
+  return (
+    <nav>
+      <div className="navBar">
+        <Link className="navLink" to="/Home">
+          Home
+        </Link>
+      </div>
+    </nav>
+  );
+}
